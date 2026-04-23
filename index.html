@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Compte Caisse</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+        .currency-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; }
+    </style>
+</head>
+<body class="bg-gray-100 p-4 pb-24 font-sans">
+
+    <header class="mb-6 mt-8">
+        <h1 class="text-2xl font-bold text-gray-800">Ma Caisse</h1>
+        <p class="text-gray-500">Total de fin de journée</p>
+    </header>
+
+    <div id="app" class="currency-grid">
+        </div>
+
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t p-6 shadow-lg flex justify-between items-center">
+        <span class="text-xl font-semibold text-gray-600">Total :</span>
+        <span id="grand-total" class="text-3xl font-black text-blue-600">0,00 €</span>
+    </div>
+
+    <script>
+        const denominations = [
+            { val: 50, type: 'billet' }, { val: 20, type: 'billet' }, { val: 10, type: 'billet' }, { val: 5, type: 'billet' },
+            { val: 2, type: 'piece' }, { val: 1, type: 'piece' }, { val: 0.5, type: 'piece' }, { val: 0.2, type: 'piece' },
+            { val: 0.1, type: 'piece' }, { val: 0.05, type: 'piece' }, { val: 0.02, type: 'piece' }, { val: 0.01, type: 'piece' }
+        ];
+
+        const app = document.getElementById('app');
+        const counts = {};
+
+        function render() {
+            app.innerHTML = denominations.map(d => `
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex flex-col items-center">
+                    <span class="text-sm font-bold text-gray-400 uppercase">${d.type}</span>
+                    <span class="text-xl font-bold mb-3">${d.val >= 1 ? d.val + ' €' : (d.val * 100).toFixed(0) + ' cts'}</span>
+                    <div class="flex items-center gap-4">
+                        <button onclick="update('${d.val}', -1)" class="w-10 h-10 rounded-full bg-gray-200 text-xl font-bold">-</button>
+                        <span id="count-${d.val}" class="text-2xl font-mono w-8 text-center">0</span>
+                        <button onclick="update('${d.val}', 1)" class="w-10 h-10 rounded-full bg-blue-500 text-white text-xl font-bold">+</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function update(val, change) {
+            counts[val] = Math.max(0, (counts[val] || 0) + change);
+            document.getElementById(`count-${val}`).innerText = counts[val];
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            for (let val in counts) {
+                total += parseFloat(val) * counts[val];
+            }
+            document.getElementById('grand-total').innerText = total.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' });
+        }
+
+        render();
+
+        // Enregistrement du Service Worker pour le PWA
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
