@@ -1,6 +1,13 @@
+const CACHE_NAME = 'caisse-v1';
+const ASSETS = [
+  '/',
+  '/index.html',
+  '/manifest.json'
+];
+
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open('caisse-v1').then((cache) => cache.addAll(['index.html']))
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS))
   );
 });
 
