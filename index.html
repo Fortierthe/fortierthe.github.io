@@ -3,105 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Caisse du Jour</title>
+    <title>Compteur de Caisse</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#4CAF50">
     <style>
-        :root { --primary: #4CAF50; --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; padding-bottom: 100px; }
-        header { background-color: var(--primary); color: white; text-align: center; padding: 20px 10px; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        header h1 { margin: 0; font-size: 1.2rem; font-weight: normal; opacity: 0.9; }
-        header .total { font-size: 2.5rem; font-weight: bold; margin-top: 5px; }
-        .section-title { font-size: 1.1rem; font-weight: 600; padding: 20px 20px 10px; color: #666; text-transform: uppercase; }
-        .card { background: var(--card); border-radius: 12px; margin: 0 15px; padding: 0 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .row { display: flex; align-items: center; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #e5e5ea; }
-        .row:last-child { border-bottom: none; }
-        .label { font-size: 1.2rem; font-weight: 500; width: 60px; }
-        .controls { display: flex; align-items: center; background: #f2f2f7; border-radius: 8px; overflow: hidden; }
-        .btn { background: none; border: none; font-size: 1.5rem; width: 40px; height: 40px; color: var(--primary); font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;}
-        .btn:active { background: #e5e5ea; }
-        .input-qty { width: 50px; border: none; background: transparent; text-align: center; font-size: 1.2rem; font-weight: bold; -moz-appearance: textfield; }
-        .input-qty::-webkit-outer-spin-button, .input-qty::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-        .subtotal { font-size: 1rem; color: #8e8e93; width: 70px; text-align: right; }
+        :root {
+            --ios-blue: #007AFF;
+            --ios-bg: #F2F2F7;
+            --ios-card: #FFFFFF;
+            --ios-text: #000000;
+            --ios-gray: #8E8E93;
+            --ios-red: #FF3B30;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--ios-bg);
+            color: var(--ios-text);
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 20px;
+            border-bottom: 1px solid #C6C6C8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left h1 {
+            margin: 0;
+            font-size: 14px;
+            text-transform: uppercase;
+            color: var(--ios-gray);
+            letter-spacing: 0.5px;
+        }
+
+        .total-display {
+            font-size: 32px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .btn-reset {
+            background-color: #E5E5EA;
+            color: var(--ios-red);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-reset:active {
+            background-color: #D1D1D6;
+        }
+
+        .container {
+            padding: 10px 15px 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 25px 5px 10px;
+        }
+
+        .card {
+            background: var(--ios-card);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 0.5px solid #C6C6C8;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .val-info {
+            flex: 1;
+        }
+
+        .val-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .val-subtotal {
+            font-size: 13px;
+            color: var(--ios-gray);
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-step {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: none;
+            background-color: #F2F2F7;
+            color: var(--ios-blue);
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-step:active {
+            background-color: #E5E5EA;
+        }
+
+        input {
+            width: 40px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            background: transparent;
+            outline: none;
+        }
+
+        /* Enlever les flèches des inputs number */
+        input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Total en Caisse</h1>
-        <div class="total" id="grand-total">0.00 €</div>
+        <div class="header-left">
+            <h1>Total Caisse</h1>
+            <p class="total-display" id="grand-total">0,00 €</p>
+        </div>
+        <button class="btn-reset" onclick="resetAll()">Réinitialiser</button>
     </header>
 
-    <div class="section-title">Pièces</div>
-    <div class="card" id="coins-container"></div>
+    <div class="container">
+        <div class="section-title">Pièces</div>
+        <div class="card" id="coins-list"></div>
 
-    <div class="section-title">Billets</div>
-    <div class="card" id="bills-container"></div>
+        <div class="section-title">Billets</div>
+        <div class="card" id="bills-list"></div>
+    </div>
 
     <script>
-        const coins = [0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1.00, 2.00];
-        const bills = [5.00, 10.00, 20.00, 50.00, 100.00, 200.00, 500.00];
-        const state = {};
+        const coins = [0.01, 0.02, 0.05, 0.10, 0.20, 0.50, 1, 2];
+        const bills = [5, 10, 20, 50, 100, 200, 500];
+        let data = {};
 
         function init() {
-            renderSection('coins-container', coins);
-            renderSection('bills-container', bills);
-            
-            // Enregistrement du Service Worker pour le hors-ligne
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js');
-            }
+            renderSection('coins-list', coins);
+            renderSection('bills-list', bills);
+            updateDisplay();
         }
 
-        function renderSection(containerId, values) {
-            const container = document.getElementById(containerId);
-            values.forEach(val => {
-                state[val] = 0;
-                const formattedVal = val >= 1 ? `${val}€` : `${(val * 100).toFixed(0)}c`;
-                
-                const row = document.createElement('div');
-                row.className = 'row';
-                row.innerHTML = `
-                    <div class="label">${formattedVal}</div>
-                    <div class="controls">
-                        <button class="btn" onclick="updateQty(${val}, -1)">-</button>
-                        <input type="number" class="input-qty" id="input-${val}" value="0" inputmode="numeric" onchange="setQty(${val}, this.value)">
-                        <button class="btn" onclick="updateQty(${val}, 1)">+</button>
+        function renderSection(id, values) {
+            const container = document.getElementById(id);
+            values.forEach(v => {
+                data[v] = 0;
+                const label = v >= 1 ? `${v} €` : `${(v*100).toFixed(0)} cts`;
+                const div = document.createElement('div');
+                div.className = 'row';
+                div.innerHTML = `
+                    <div class="val-info">
+                        <div class="val-name">${label}</div>
+                        <div class="val-subtotal" id="sub-${v}">0,00 €</div>
                     </div>
-                    <div class="subtotal" id="sub-${val}">0.00 €</div>
+                    <div class="controls">
+                        <button class="btn-step" onclick="change(${v}, -1)">-</button>
+                        <input type="number" id="qty-${v}" value="0" inputmode="numeric" onchange="set(${v}, this.value)">
+                        <button class="btn-step" onclick="change(${v}, 1)">+</button>
+                    </div>
                 `;
-                container.appendChild(row);
+                container.appendChild(div);
             });
         }
 
-        function updateQty(val, delta) {
-            let current = state[val];
-            let next = current + delta;
-            if (next < 0) next = 0;
-            setQty(val, next);
+        function change(v, delta) {
+            data[v] = Math.max(0, data[v] + delta);
+            updateDisplay();
         }
 
-        function setQty(val, quantity) {
-            let qty = parseInt(quantity) || 0;
-            if (qty < 0) qty = 0;
-            state[val] = qty;
-            document.getElementById(`input-${val}`).value = qty;
-            
-            const subtotal = (qty * val).toFixed(2);
-            document.getElementById(`sub-${val}`).innerText = `${subtotal} €`;
-            
-            calculateTotal();
+        function set(v, val) {
+            data[v] = Math.max(0, parseInt(val) || 0);
+            updateDisplay();
         }
 
-        function calculateTotal() {
-            let total = 0;
-            for (let val in state) {
-                total += parseFloat(val) * state[val];
+        function resetAll() {
+            if(confirm("Voulez-vous vraiment remettre la caisse à zéro ?")) {
+                for (let v in data) data[v] = 0;
+                updateDisplay();
             }
-            document.getElementById('grand-total').innerText = `${total.toFixed(2)} €`;
+        }
+
+        function updateDisplay() {
+            let total = 0;
+            for (let v in data) {
+                const sub = v * data[v];
+                total += sub;
+                document.getElementById(`qty-${v}`).value = data[v];
+                document.getElementById(`sub-${v}`).innerText = sub.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR'});
+            }
+            document.getElementById('grand-total').innerText = total.toLocaleString('fr-FR', {style: 'currency', currency: 'EUR'});
         }
 
         window.onload = init;
